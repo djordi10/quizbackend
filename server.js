@@ -111,6 +111,53 @@ app.post('/submit-essay', authenticateToken, async (req, res) => {
     }
 });
 
+app.post('/submit-feedback', authenticateToken, async (req, res) => {
+    const { userID, questionID, feedback } = req.body;
+
+    const query = `
+        UPDATE QuizEssay 
+        SET feedback = $3
+        WHERE UserID = $1 AND QuestionID = $2
+    `;
+
+    try {
+        await executeQuery(query, [userID, questionID, feedback]);
+        res.status(200).send('Feedback submitted successfully');
+    } catch (err) {
+        console.error('Error during submitting feedback:', err);
+        res.status(500).send('Error during submitting feedback');
+    }
+});
+
+// Endpoint to get feedback for a specific user's essay answers
+app.get('/get-feedback', authenticateToken, async (req, res) => {
+    const userID = req.user.userID; // Assuming userID is stored in JWT
+
+    const query = `
+        SELECT QuestionID, UserAnswer, Feedback 
+        FROM QuizEssay 
+        WHERE UserID = $1
+    `;
+
+    try {
+        const result = await executeQuery(query, [userID]);
+        if (result.rows.length === 0) {
+            // Return default structure for 3 questions with empty feedback
+            res.status(200).json([
+                { QuestionID: 1, UserAnswer: "", Feedback: "" },
+                { QuestionID: 2, UserAnswer: "", Feedback: "" },
+                { QuestionID: 3, UserAnswer: "", Feedback: "" }
+            ]);
+        } else {
+            res.status(200).json(result.rows);
+        }
+    } catch (err) {
+        console.error('Error retrieving feedback:', err);
+        res.status(500).send('Error retrieving feedback');
+    }
+});
+
+
 
 app.listen(port, () => {
     console.log(`Quiz API listening at http://localhost:${port}`);
