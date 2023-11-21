@@ -134,9 +134,9 @@ app.get('/get-feedback', authenticateToken, async (req, res) => {
     const userID = req.user.userID; // Assuming userID is stored in JWT
 
     const query = `
-        SELECT QuestionID, UserAnswer, Feedback 
-        FROM QuizEssay 
-        WHERE UserID = $1
+        SELECT questionid, useranswer, feedback 
+        FROM quizessay 
+        WHERE userid = $1
     `;
 
     try {
