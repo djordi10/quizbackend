@@ -73,7 +73,8 @@ const authenticateDosen = (req, res, next) => {
 };
 
 app.post('/submit-survey', authenticateToken, async (req, res) => {
-    const { userID, feeling, comments } = req.body;
+    const {  feeling, comments } = req.body;
+    const userID = req.user.userID; // Extract userID from JWT token
 
     const query = `
         INSERT INTO UserSurveys (UserID, Feeling, Comments)
