@@ -72,6 +72,24 @@ const authenticateDosen = (req, res, next) => {
     });
 };
 
+app.post('/submit-survey', authenticateToken, async (req, res) => {
+    const { userID, feeling, comments } = req.body;
+
+    const query = `
+        INSERT INTO UserSurveys (UserID, Feeling, Comments)
+        VALUES ($1, $2, $3)
+    `;
+
+    try {
+        await executeQuery(query, [userID, feeling, comments]);
+        res.status(200).send('Survey response submitted successfully');
+    } catch (err) {
+        console.error('Error during submitting survey:', err);
+        res.status(500).send('Error during submitting survey');
+    }
+});
+
+
 
 // User Login Endpoint
 app.post('/login', async (req, res) => {
@@ -246,6 +264,25 @@ app.get('/get-admin-essay', authenticateDosen, async (req, res) => {
         res.status(500).send('Error retrieving essays and score');
     }
 });
+
+
+app.get('/get-user-surveys', authenticateDosen, async (req, res) => {
+    const userID = req.query.userid; // Get userID from query parameters
+
+    const query = `
+        SELECT * FROM UserSurveys
+        WHERE UserID = $1
+    `;
+
+    try {
+        const result = await executeQuery(query, [userID]);
+        res.status(200).json(result.rows);
+    } catch (err) {
+        console.error('Error retrieving surveys:', err);
+        res.status(500).send('Error retrieving surveys');
+    }
+});
+
 
 
 
