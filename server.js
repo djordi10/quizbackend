@@ -294,7 +294,7 @@ app.get('/users', authenticateDosen, async (req, res) => {
     }
 
     try {
-        const users = await executeQuery('SELECT userid, nim, fullname FROM Users');
+        const users = await executeQuery('SELECT userid, nim, fullname, kelas FROM Users ORDER BY kelas');
         res.json(users.rows);
     } catch (err) {
         console.error(err);
