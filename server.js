@@ -251,9 +251,7 @@ app.get('/get-admin-essay', authenticateDosen, async (req, res) => {
         if (essayResult.rows.length === 0) {
             // Default structure for 3 questions with empty feedback
             response.essays = [
-                { QuestionID: 1, UserAnswer: "", Feedback: "" },
-                { QuestionID: 2, UserAnswer: "", Feedback: "" },
-                { QuestionID: 3, UserAnswer: "", Feedback: "" }
+                { QuestionID: 1, UserAnswer: "", Feedback: "" }
             ];
         } else {
             response.essays = essayResult.rows;
